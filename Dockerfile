@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Install ts-node globally for dev
+RUN npm install -g ts-node ts-node-dev
+
 # Copy the rest of the code
 COPY . .
 
