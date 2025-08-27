@@ -9,6 +9,7 @@ export async function getFavoriteMovies(request: Request, response: Response) {
 
     try {
         const movies = await fetchMovieDetailsForFavorites(userId);
+        return response.json(movies);
     } catch (error) {
         response.status(500).json({ error: 'Database error' });
     }

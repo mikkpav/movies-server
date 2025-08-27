@@ -43,7 +43,7 @@ ensureSchema()
 // Get all favorite movie details
 //
 
-app.use('/favorites/movies', favoritesRoutes);
+app.use('/favorites', favoritesRoutes);
 
 //
 // Toggle a favorite for a user and a movie
