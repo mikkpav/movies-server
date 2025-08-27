@@ -8,6 +8,7 @@ import pool, { ensureSchema } from './db/db.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+import favoritesRoutes from './routes/favorites.js';
 
 if (process.env.NODE_ENV === 'production') {
   app.use(
@@ -35,19 +36,29 @@ ensureSchema()
   })
   .catch((err) => console.error(err));
 
-// Routes
 
-// Toggle a favorite for a user
+/** Routes **/
+
+//
+// Get all favorite movie details
+//
+
+app.use('/favorites/movies', favoritesRoutes);
+
+//
+// Toggle a favorite for a user and a movie
+//
+
 app.post('/favorites/toggle', async (req, res) => {
-    const { user_id, movie_id } = req.body;
-    if (!user_id || !movie_id) {
-        return res.status(400).json({ error: 'user_id and movie_id required' });
+    const { userId, movieId } = req.body;
+    if (!userId || !movieId) {
+        return res.status(400).json({ error: 'userId and movieId required' });
     }
 
     try {
         const existingResult = await pool.query(
             `SELECT 1 FROM favorites WHERE user_id = $1 AND movie_id = $2`,
-            [user_id, movie_id]
+            [userId, movieId]
         );
         
         let action;
@@ -56,7 +67,7 @@ app.post('/favorites/toggle', async (req, res) => {
         if (existingResult.rowCount && existingResult.rowCount > 0) {
             await pool.query(
                 `DELETE FROM favorites WHERE user_id = $1 AND movie_id = $2`,
-                    [user_id, movie_id]
+                    [userId, movieId]
             );
             action = 'removed'
         } else {
@@ -64,30 +75,32 @@ app.post('/favorites/toggle', async (req, res) => {
                 `INSERT INTO favorites (user_id, movie_id)
                 VALUES ($1, $2)
                 RETURNING created_at`,
-                [user_id, movie_id]
+                [userId, movieId]
             );
             action = 'added';
             createdAt = insertResult.rows[0].created_at;
         }
 
-        res.json({ movieId: Number(movie_id), action, createdAt });
+          
     } catch (err) {
         console.error('Error inserting favorite:', err);
         res.status(500).json({ error: 'Database error' });
     }
 });
 
-// Get all favorites for a user
+//
+// Get all favorite movie ID's for a user
+//
 app.get('/favorites', async (req, res) => {
-  const { user_id } = req.query;
-  if (!user_id) {
-    return res.status(400).json({ error: 'user_id required' });
+  const { userId } = req.query;
+  if (!userId) {
+    return res.status(400).json({ error: 'userId required' });
   }
 
   try {
     const result = await pool.query(
       `SELECT movie_id, created_at FROM favorites WHERE user_id = $1 ORDER BY created_at DESC`,
-      [user_id]
+      [userId]
     );
 
     const favorites = result.rows.map(row => ({
@@ -101,3 +114,7 @@ app.get('/favorites', async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 });
+
+//
+// Get all favorite movie details for a user
+//

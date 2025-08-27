@@ -21,6 +21,7 @@ services:
       DB_USER: mikk
       DB_PASSWORD: secret
       DB_SSL: false
+      TMDB_ACCESS_TOKEN: ${TMDB_ACCESS_TOKEN} 
     ports:
       - "3000:3000"
     depends_on:
@@ -28,6 +29,7 @@ services:
     command: ["/wait-for-it.sh", "db:5432", "--", "npm", "run", "dev"]
     volumes:
       - ./movies-server:/usr/src/app
+      - /app/node_modules
 
 volumes:
   pgdata:
