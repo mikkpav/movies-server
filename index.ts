@@ -13,7 +13,7 @@ import favoritesRoutes from './routes/favorites.js';
 if (process.env.NODE_ENV === 'production') {
   app.use(
     cors({
-      origin: ['https://mikkpavelson.com/'],
+      origin: ['https://mikkpavelson.com'],
       credentials: true,
     })
   );
