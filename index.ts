@@ -49,10 +49,10 @@ app.use('/favorites', favoritesRoutes);
 // Toggle a favorite for a user and a movie
 //
 
-app.post('/favorites/toggle', async (req, res) => {
-    const { userId, movieId } = req.body;
+app.post('/favorites/toggle', async (request, response) => {
+    const { userId, movieId } = request.body;
     if (!userId || !movieId) {
-        return res.status(400).json({ error: 'userId and movieId required' });
+        return response.status(400).json({ error: 'userId and movieId required' });
     }
 
     try {
@@ -81,10 +81,10 @@ app.post('/favorites/toggle', async (req, res) => {
             createdAt = insertResult.rows[0].created_at;
         }
 
-          
+        response.json({ movieId: Number(movieId), action, createdAt });
     } catch (err) {
         console.error('Error inserting favorite:', err);
-        res.status(500).json({ error: 'Database error' });
+        response.status(500).json({ error: 'Database error' });
     }
 });
 
@@ -114,7 +114,3 @@ app.get('/favorites', async (req, res) => {
     res.status(500).json({ error: 'Database error' });
   }
 });
-
-//
-// Get all favorite movie details for a user
-//
