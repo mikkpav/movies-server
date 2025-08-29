@@ -12,6 +12,9 @@ const PORT = process.env.PORT || 3000;
 import favoritesRoutes from './routes/favorites.js';
 import movieRoutes from './routes/movies.js';
 import healthRoutes from './routes/health.js';
+import { asyncHandler } from './utils/asyncHandler.js';
+import type { Request, Response, NextFunction } from 'express';
+import axios from 'axios';
 
 if (process.env.NODE_ENV === 'production') {
   app.use(
@@ -45,20 +48,20 @@ ensureSchema()
 //
 // Health check and ping via UptimeRobot
 //
-app.use('/health', healthRoutes)
+app.use('/health', asyncHandler(healthRoutes))
 
 
 //
 // Get lists and details about movies
 //
-app.use('/movies', movieRoutes)
+app.use('/movies', asyncHandler(movieRoutes))
 
 
 //
 // Get all favorite movies' details
 //
 
-app.use('/favorites', favoritesRoutes);
+app.use('/favorites', asyncHandler(favoritesRoutes));
 
 //
 // Toggle a favorite for a user and a movie
@@ -128,4 +131,20 @@ app.get('/favorites', async (req, res) => {
     console.error('Error fetching favorites:', err);
     res.status(500).json({ error: 'Database error' });
   }
+});
+
+//
+// Generic error handling
+//
+
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    console.error('Unhandled error:', err);
+
+    if (axios.isAxiosError(err)) {
+        return res
+            .status(err.response?.status || 502)
+            .json({ error: err.message });
+    }
+
+    res.status(500).json({ error: 'Internal server error' });
 });

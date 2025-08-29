@@ -32,10 +32,7 @@ export async function fetchMovieDetailsForFavorites(userId: string) {
         const favoriteIds = rows.map(r => r.movie_id);
 
         const movieDetails: MovieDetails[] = await Promise.all(
-            favoriteIds.map(async id => {
-                const response = await tmdbClient.get<TMDBMovieDetailsResponse>(`/movie/${id}`);
-                return mapMovieDetailsApiResponse(response.data);
-            })
+            favoriteIds.map(id => fetchMovieDetails(id))
         );
 
         return movieDetails
@@ -43,6 +40,11 @@ export async function fetchMovieDetailsForFavorites(userId: string) {
         console.error('Error fetching favorites from DB:', error);
         throw error;
     }
+}
+
+export async function fetchMovieDetails(movieId: string): Promise<MovieDetails> {
+    const response = await tmdbClient.get<TMDBMovieDetailsResponse>(`/movie/${movieId}`);
+    return mapMovieDetailsApiResponse(response.data);
 }
 
 function mapMovieDetailsApiResponse(data: TMDBMovieDetailsResponse): MovieDetails {
@@ -68,7 +70,7 @@ function mapMovieDetailsApiResponse(data: TMDBMovieDetailsResponse): MovieDetail
 }
 
 export async function fetchPopularMovies() {
-    const { data } = await tmdbClient.get<TMDBMoviesResponse>('/movies/popular')
+    const { data } = await tmdbClient.get<TMDBMoviesResponse>('/movie/popular')
     return data.results.map(mapMovieApiResponse);
 }
 
