@@ -8,7 +8,10 @@ import pool, { ensureSchema } from './db/db.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 import favoritesRoutes from './routes/favorites.js';
+import movieRoutes from './routes/movies.js';
+import healthRoutes from './routes/health.js';
 
 if (process.env.NODE_ENV === 'production') {
   app.use(
@@ -40,7 +43,19 @@ ensureSchema()
 /** Routes **/
 
 //
-// Get all favorite movie details
+// Health check and ping via UptimeRobot
+//
+app.use('/health', healthRoutes)
+
+
+//
+// Get lists and details about movies
+//
+app.use('/movies', movieRoutes)
+
+
+//
+// Get all favorite movies' details
 //
 
 app.use('/favorites', favoritesRoutes);

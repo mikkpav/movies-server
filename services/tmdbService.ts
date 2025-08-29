@@ -1,6 +1,6 @@
 import axios from 'axios';
 import pool from '../db/db.js';
-import type { TMDBMovieDetailsResponse, MovieDetails } from '../types/movies.js';
+import type { TMDBMovieDetailsResponse, MovieDetails, TMDBMoviesResponse, TMDBMovieResponse, Movie } from '../types/movies.js';
 
 const TMDB_ACCESS_TOKEN = process.env.TMDB_ACCESS_TOKEN;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -63,6 +63,27 @@ function mapMovieDetailsApiResponse(data: TMDBMovieDetailsResponse): MovieDetail
         imdbId: data.imdb_id,
         originCountry: data.origin_country,
         tagline: data.tagline,
+        favorite: false
+    }
+}
+
+export async function fetchPopularMovies() {
+    const { data } = await tmdbClient.get<TMDBMoviesResponse>('/movies/popular')
+    return data.results.map(mapMovieApiResponse);
+}
+
+function mapMovieApiResponse(data: TMDBMovieResponse): Movie {
+    return {
+        id: data.id,
+        overview: data.overview,
+        posterPathSmall: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_LIST}${data.poster_path}`,
+        backdropPathSmall: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_LIST}${data.backdrop_path}`,
+        posterPathLarge: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_DETAIL}${data.poster_path}`,
+        backdropPathLarge: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_DETAIL}${data.backdrop_path}`,
+        releaseDate: data.release_date,
+        title: data.title,
+        voteAverage: Math.round(data.vote_average * 10) / 10,
+        voteCount: data.vote_count,
         favorite: false
     }
 }
