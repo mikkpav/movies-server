@@ -9,7 +9,6 @@ export async function getPopularMovies(request: Request, response: Response) {
 
 export async function getMovieDetails(request: Request, response: Response) {
     const movieId = (request.params.movieId as string) || '';
-    console.log('>>> fetch movie ID: ', request.params.movieId)
     if (!movieId) {
         return response.status(400).json({ error: 'movieId required'});
     }
