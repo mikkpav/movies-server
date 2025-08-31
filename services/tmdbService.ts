@@ -1,7 +1,8 @@
 import axios from 'axios';
 import pool from '../db/db.js';
-import type { TMDBMovieDetailsResponse, MovieDetails, TMDBMoviesResponse } from '../types/movies.js';
-import { mapMovieApiResponse, mapMovieDetailsApiResponse } from '../mappers/movieMapper.js';
+import type { TMDBMovieDetailsResponse, MovieDetails, TMDBMoviesResponse, TMDBSearchResponse } from '../types/movies.js';
+import { mapMovieApiResponse, mapMovieDetailsApiResponse, mapMovieSearchResult } from '../mappers/movieMapper.js';
+import { machine } from 'node:os';
 
 const TMDB_ACCESS_TOKEN = process.env.TMDB_ACCESS_TOKEN;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -26,6 +27,7 @@ export async function fetchPopularMovies() {
 }
 
 export async function fetchMovieDetails(movieId: string): Promise<MovieDetails> {
+    console.log('Fetching details for movieId:', movieId);
     const response = await tmdbClient.get<TMDBMovieDetailsResponse>(`/movie/${movieId}`);
     return mapMovieDetailsApiResponse(response.data);
 }
@@ -47,4 +49,11 @@ export async function fetchMovieDetailsForFavorites(userId: string) {
         console.error('Error fetching favorites from DB:', error);
         throw error;
     }
+}
+
+export async function fetchMoviesByQuery(query: string) {
+    const response = await tmdbClient.get<TMDBSearchResponse>('/search/movie', {
+        params: { query }
+    });
+    return mapMovieSearchResult(response.data);
 }

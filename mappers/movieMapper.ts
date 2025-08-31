@@ -1,4 +1,4 @@
-import type { TMDBMovieDetailsResponse, MovieDetails, TMDBMovieResponse, Movie } from '../types/movies.js';
+import type { TMDBMovieDetailsResponse, MovieDetails, TMDBMovieResponse, Movie, TMDBSearchResponse, SearchResponse } from '../types/movies.js';
 
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/';
 const TMDB_POSTER_SIZE_LIST = 'w154';
@@ -39,5 +39,14 @@ export function mapMovieApiResponse(data: TMDBMovieResponse): Movie {
         voteAverage: Math.round(data.vote_average * 10) / 10,
         voteCount: data.vote_count,
         favorite: false
+    }
+}
+
+export function mapMovieSearchResult(data: TMDBSearchResponse): SearchResponse {
+    return {
+        page: data.page,
+        results: data.results.map(mapMovieApiResponse),
+        totalPages: data.total_pages,
+        totalResults: data.total_results
     }
 }
