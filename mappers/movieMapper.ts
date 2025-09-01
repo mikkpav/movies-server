@@ -4,14 +4,22 @@ const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/';
 const TMDB_POSTER_SIZE_LIST = 'w154';
 const TMDB_POSTER_SIZE_DETAIL = 'w500';
 
+function imageUrlSmallForPath(path: string | null): string | null {
+    return path ? `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_LIST}${path}` : null;
+}
+
+function imageUrlLargeForPath(path: string | null): string | null {
+    return path ? `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_DETAIL}${path}` : null;
+}
+
 export function mapMovieDetailsApiResponse(data: TMDBMovieDetailsResponse): MovieDetails {
   return {
         id: data.id,
         overview: data.overview,
-        posterPathSmall: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_LIST}${data.poster_path}`,
-        backdropPathSmall: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_LIST}${data.backdrop_path}`,
-        posterPathLarge: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_DETAIL}${data.poster_path}`,
-        backdropPathLarge: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_DETAIL}${data.backdrop_path}`,
+        posterPathSmall: imageUrlSmallForPath(data.poster_path),
+        backdropPathSmall: imageUrlSmallForPath(data.backdrop_path),
+        posterPathLarge: imageUrlLargeForPath(data.poster_path),
+        backdropPathLarge: imageUrlLargeForPath(data.backdrop_path),
         releaseDate: data.release_date,
         title: data.title,
         voteAverage: Math.round(data.vote_average * 10) / 10,
@@ -30,10 +38,10 @@ export function mapMovieApiResponse(data: TMDBMovieResponse): Movie {
     return {
         id: data.id,
         overview: data.overview,
-        posterPathSmall: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_LIST}${data.poster_path}`,
-        backdropPathSmall: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_LIST}${data.backdrop_path}`,
-        posterPathLarge: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_DETAIL}${data.poster_path}`,
-        backdropPathLarge: `${TMDB_IMAGE_BASE_URL}${TMDB_POSTER_SIZE_DETAIL}${data.backdrop_path}`,
+        posterPathSmall: imageUrlSmallForPath(data.poster_path),
+        backdropPathSmall: imageUrlSmallForPath(data.backdrop_path),
+        posterPathLarge: imageUrlLargeForPath(data.poster_path),
+        backdropPathLarge: imageUrlLargeForPath(data.backdrop_path),
         releaseDate: data.release_date,
         title: data.title,
         voteAverage: Math.round(data.vote_average * 10) / 10,

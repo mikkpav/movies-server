@@ -18,10 +18,10 @@ export interface Movie {
   id: number;
   title: string;
   overview: string;
-  posterPathSmall: string;
-  backdropPathSmall: string;
-  posterPathLarge: string;
-  backdropPathLarge: string;
+  posterPathSmall: string | null;
+  backdropPathSmall: string | null;
+  posterPathLarge: string | null;
+  backdropPathLarge: string | null;
   releaseDate: string;
   voteAverage: number;
   voteCount: number;
