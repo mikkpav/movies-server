@@ -13,10 +13,9 @@ import favoritesRoutes from './routes/favorites.js';
 import movieRoutes from './routes/movies.js';
 import healthRoutes from './routes/health.js';
 import authRoutes from './routes/authentication.js';
-import { asyncHandler } from './utils/asyncHandler.js';
 import type { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
-import { requireAuth } from '../middleware/authenticator.js';
+import { requireAuth } from './middleware/authenticator.js';
 
 if (process.env.NODE_ENV === 'production') {
   app.use(
