@@ -16,6 +16,7 @@ import authRoutes from './routes/authentication.js';
 import type { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import { requireAuth } from './middleware/authenticator.js';
+import cookieParser from 'cookie-parser';
 
 if (process.env.NODE_ENV === 'production') {
   app.use(
@@ -33,6 +34,7 @@ if (process.env.NODE_ENV === 'production') {
   );
 }
 app.use(express.json());
+app.use(cookieParser());
 
 ensureSchema()
   .then(() => {

@@ -23,6 +23,14 @@ export async function signupNewUser(request: Request, response: Response) {
     response.json({ userId });
 }
 
+export async function getCurrentUser(request: Request, response: Response) {
+    const token = request.cookies?.token;
+    if (!token) return response.status(401).json({ error: "Not authenticated" });
+
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    response.json({ userId: payload.userId });
+}
+
 export async function login(request: Request, response: Response) {
     const { email, password } = request.body;
 
