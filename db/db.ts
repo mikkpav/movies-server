@@ -2,7 +2,7 @@
 import { Pool } from 'pg';
 
 // Create a new pool using environment variables
-const pool = new Pool({
+export const pool = new Pool({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   database: process.env.DB_NAME,
@@ -25,6 +25,12 @@ pool
  * Creates table if it doesn't exist yet.
  */
 export async function ensureSchema() {
+    ensureFavoritesTable();
+    ensureUsersTable();
+    console.log('✅ Database schema ensured');
+}
+
+async function ensureFavoritesTable() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS favorites (
       id SERIAL PRIMARY KEY,
@@ -34,7 +40,18 @@ export async function ensureSchema() {
       UNIQUE (user_id, movie_id)
     );
   `);
-  console.log('✅ Database schema ensured');
+  console.log('✅ Favorites schema ensured');
+}
+
+export async function ensureUsersTable() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL
+    );
+  `);
+  console.log('✅ Users table ensured');
 }
 
 export default pool;

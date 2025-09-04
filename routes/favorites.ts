@@ -1,6 +1,9 @@
 import { Router } from 'express';
-import { getFavoriteMovies } from '../controllers/favoritesController.js';
+import { getFavoriteMovieIds, getFavoriteMovies, toggleFavorite } from '../controllers/favoritesController.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
 
 const router = Router();
-router.get('/movies', getFavoriteMovies);
+router.get('/ids', asyncHandler(getFavoriteMovieIds));
+router.get('/movies', asyncHandler(getFavoriteMovies));
+router.post('/toggle', asyncHandler(toggleFavorite));
 export default router;
