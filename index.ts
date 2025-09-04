@@ -69,7 +69,7 @@ app.use('/movies', movieRoutes);
 // Get all favorite movies' details
 //
 
-app.use('/favorites', requireAuth, favoritesRoutes);
+app.use('/favorites', favoritesRoutes); // Add ths when auth is ready: requireAuth, 
 
 //
 // Generic error handling
