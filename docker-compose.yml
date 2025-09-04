@@ -28,7 +28,7 @@ services:
       - db
     command: ["/wait-for-it.sh", "db:5432", "--", "npm", "run", "dev"]
     volumes:
-      - ./movies-server:/usr/src/app
+      - .:/app
       - /app/node_modules
 
 volumes:
