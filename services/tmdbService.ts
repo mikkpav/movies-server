@@ -32,7 +32,7 @@ export async function fetchMovieDetails(movieId: string): Promise<MovieDetails> 
     return mapMovieDetailsApiResponse(response.data);
 }
 
-export async function fetchMovieDetailsForFavorites(userId: string) {
+export async function fetchMovieDetailsForFavorites(userId: number) {
     try {
         const { rows } = await pool.query(
             `SELECT movie_id FROM favorites WHERE user_id = $1`,

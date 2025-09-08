@@ -17,6 +17,8 @@ import type { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import { requireAuth } from './middleware/authenticator.js';
 import cookieParser from 'cookie-parser';
+import fs from 'fs';
+import https from 'https';
 
 if (process.env.NODE_ENV === 'production') {
   app.use(
@@ -39,12 +41,23 @@ app.use(cookieParser());
 ensureSchema()
   .then(() => {
     const port = process.env.PORT || 3000;
-    app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
+
+    if (process.env.NODE_ENV === 'development') {
+      const httpsOptions = {
+        key: fs.readFileSync('localhost-key.pem'),
+        cert: fs.readFileSync('localhost.pem'),
+      };
+
+      https.createServer(httpsOptions, app).listen(port, () => {
+        console.log(`HTTPS Server running on port ${port}`);
+      });
+    } else {
+      app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+      });
+    }
   })
   .catch((err) => console.error(err));
-
 
 /** Routes **/
 
@@ -54,35 +67,31 @@ ensureSchema()
 app.use('/health', healthRoutes);
 
 //
-// User authentication 
+// User authentication
 //
 app.use('/auth', authRoutes);
-
 
 //
 // Get lists and details about movies
 //
 app.use('/movies', movieRoutes);
 
-
 //
 // Get all favorite movies' details
 //
 
-app.use('/favorites', favoritesRoutes); // Add ths when auth is ready: requireAuth, 
+app.use('/favorites', requireAuth, favoritesRoutes);
 
 //
 // Generic error handling
 //
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-    console.error('Unhandled error:', err);
+  console.error('Unhandled error:', err);
 
-    if (axios.isAxiosError(err)) {
-        return res
-            .status(err.response?.status || 502)
-            .json({ error: err.message });
-    }
+  if (axios.isAxiosError(err)) {
+    return res.status(err.response?.status || 502).json({ error: err.message });
+  }
 
-    res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ error: 'Internal server error' });
 });

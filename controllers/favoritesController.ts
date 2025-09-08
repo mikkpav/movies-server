@@ -1,9 +1,10 @@
 import { fetchMovieDetailsForFavorites } from '../services/tmdbService.js';
 import type { Request, Response } from 'express';
 import { pool } from '../db/db.js';
+import type { AuthenticatedRequest } from '../middleware/authenticator.js';
 
-export async function getFavoriteMovieIds(request: Request, response: Response) {
-    const { userId } = request.query;
+export async function getFavoriteMovieIds(request: AuthenticatedRequest, response: Response) {
+    const { userId } = request;
     if (!userId) {
         return response.status(400).json({ error: 'userId required' });
     }
@@ -21,8 +22,8 @@ export async function getFavoriteMovieIds(request: Request, response: Response) 
     response.json(favorites);
 }
 
-export async function getFavoriteMovies(request: Request, response: Response) {
-    const userId = (request.query.userId as string) || '';
+export async function getFavoriteMovies(request: AuthenticatedRequest, response: Response) {
+    const { userId } = request;
     if (!userId) {
         return response.status(400).json({ error: 'userId required' });
     }
@@ -31,8 +32,10 @@ export async function getFavoriteMovies(request: Request, response: Response) {
     response.json(movies);
 }
 
-export async function toggleFavorite(request: Request, response: Response) {
-    const { userId, movieId } = request.body;
+export async function toggleFavorite(request: AuthenticatedRequest, response: Response) {
+    const { movieId } = request.body;
+    const { userId } = request;
+
     if (!userId || !movieId) {
         return response.status(400).json({ error: 'userId and movieId required' });
     }

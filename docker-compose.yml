@@ -15,6 +15,7 @@ services:
     build: .
     container_name: movies-app
     environment:
+      NODE_ENV: development
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: movies_local
