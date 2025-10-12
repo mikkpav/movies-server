@@ -13,6 +13,7 @@ import favoritesRoutes from './routes/favorites.js';
 import movieRoutes from './routes/movies.js';
 import healthRoutes from './routes/health.js';
 import authRoutes from './routes/authentication.js';
+import newsRoutes from './routes/news.js';
 import type { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import { requireAuth } from './middleware/authenticator.js';
@@ -81,6 +82,12 @@ app.use('/movies', movieRoutes);
 //
 
 app.use('/favorites', requireAuth, favoritesRoutes);
+
+//
+// News 
+//
+
+app.use('/news', newsRoutes);
 
 //
 // Generic error handling
