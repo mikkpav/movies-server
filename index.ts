@@ -22,9 +22,19 @@ import fs from 'fs';
 import https from 'https';
 
 if (process.env.NODE_ENV === 'production') {
+  const defaultOrigins = [
+    'https://mikkpavelson.com',
+    'https://www.mikkpavelson.com',
+  ];
+  const envOrigins =
+    process.env.CORS_ORIGINS?.split(',')
+      .map((s) => s.trim())
+      .filter(Boolean) ?? [];
+  const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
   app.use(
     cors({
-      origin: ['https://mikkpavelson.com'],
+      origin: allowedOrigins,
       credentials: true,
     })
   );
